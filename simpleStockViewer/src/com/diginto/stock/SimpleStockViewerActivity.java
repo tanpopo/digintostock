@@ -15,9 +15,21 @@ public class SimpleStockViewerActivity extends Activity {
         stockListView = (ListView)this.findViewById(R.id.stockListView);
 
         StockListAdapter adapter = new StockListAdapter(this, R.layout.row_stock);
-        adapter.add(new Stock("ソニー", 2000));
-        adapter.add(new Stock("ホンダ", 3000));
-        adapter.add(new Stock("トヨタ", 4000));
+        adapter.add(new Stock(Integer.toString(6758), "T", "ソニー"));
+        adapter.add(new Stock(Integer.toString(7267), "T", "ホンダ"));
+        adapter.add(new Stock(Integer.toString(7203), "T", "トヨタ"));
+
+        Stock stock = adapter.getItem(0);
+        stock.setCurrentValue(1000);
+        stock.setDiffValue(100);
+
+        stock = adapter.getItem(1);
+        stock.setCurrentValue(500);
+        stock.setDiffValue(-10);
+
+        stock = adapter.getItem(2);
+        stock.setCurrentValue(10);
+        stock.setDiffValue(2);
 
         stockListView.setAdapter(adapter);
     }
