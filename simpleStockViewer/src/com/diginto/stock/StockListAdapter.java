@@ -21,7 +21,7 @@ public class StockListAdapter extends ArrayAdapter<Stock> {
 		Stock stock = (Stock)getItem(position);
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(resourceId, null);
+			convertView = inflater.inflate(resourceId, null);//データ1つ分の表示領域
 		}
 		TextView idView = (TextView)convertView.findViewById(R.id.id);
 		idView.setText(stock.getIdWithMarket());
