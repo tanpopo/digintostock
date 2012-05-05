@@ -18,6 +18,17 @@ import android.view.View;
 
 public class SimpleStockViewerActivity extends Activity {
 
+	static final int QUOTES_NUM = 3;
+	private static final String targetQuotes[] = {"GOOG", "YHOO", "SNE"};
+
+	private StockQuote[] getDummyQuoteList() {
+		StockQuote quotes[] = new StockQuote[QUOTES_NUM];
+		for (int i = 0; i < quotes.length; i++) {
+			quotes[i] = new StockQuote(targetQuotes[i]);
+		}
+
+			return quotes;
+	}
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,22 +39,11 @@ public class SimpleStockViewerActivity extends Activity {
         stockListView = (ListView)this.findViewById(R.id.stockListView);
 
         StockListAdapter adapter = new StockListAdapter(this, R.layout.row_stock);
-        adapter.add(new Stock(Integer.toString(6758), "T", "ソニー"));
-        adapter.add(new Stock(Integer.toString(7267), "T", "ホンダ"));
-        adapter.add(new Stock(Integer.toString(7203), "T", "トヨタ"));
+        StockQuote quotes[] = getDummyQuoteList();
 
-        Stock stock = adapter.getItem(0);
-        stock.setCurrentValue(1000);
-        stock.setDiffValue(100);
-
-        stock = adapter.getItem(1);
-        stock.setCurrentValue(500);
-        stock.setDiffValue(-10);
-
-        stock = adapter.getItem(2);
-        stock.setCurrentValue(10);
-        stock.setDiffValue(2);
-
+        for (int i = 0; i < quotes.length; i++) {
+	        adapter.add(quotes[i]);
+        }
         stockListView.setAdapter(adapter);
 
         //setup button
@@ -54,19 +54,18 @@ public class SimpleStockViewerActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-            	FinantialDataUpdater updater = new FinantialDataUpdater();
-            	//RBS.L: The Royal Bank of Scotland Group plc/London
-            	//YHOO: Yahoo/Nasdaq
-            	//GOOG: Google/Nasdaq
-            	String text = updater.getData("GOOG");
-            	StockQuote quote = FinantialDataUtil.getStockQuoteFromJson(text);
-
-
-            	AlertDialog.Builder dlg = new AlertDialog.Builder(SimpleStockViewerActivity.this);
-                dlg.setTitle("received response");
-                dlg.setMessage(quote.toString());
-                dlg.show();
+            	updateAllItem();
             }
         });
+    }
+    private int updateAllItem() {
+//		ListView lv = (ListView)findViewById(R.id.stockListView);
+//		for (int i = 0; i < lv.getCount(); i++) {
+//			View view = (View)lv.getItemAtPosition(i);//[todo] ここで返るのはおそらくStockQuote
+//														//ListView内の1アイテムをあらわすViewを取得する方法が分からない・・・
+//			StockQuoteUpdateTask task = new StockQuoteUpdateTask(view);
+//			task.execute();
+//		}
+		return 0;
     }
 }

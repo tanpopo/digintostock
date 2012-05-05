@@ -12,6 +12,11 @@ public class StockQuote {
 	double ChangeRealtime;//ChangeRealtime: 前日終値からの差分
 	double ChangePercent; //PercentChange: 前日終値からの差分(%)
 
+	public StockQuote() {
+	}
+	public StockQuote(String symbol) {
+		this.symbol = symbol;
+	}
 	public String toString() {
 		return new String("symbol=" + this.getSymbol() + " LastTrade=" + Double.toString(this.getLastTradePrice()));
 	}

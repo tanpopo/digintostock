@@ -1,6 +1,7 @@
 package com.diginto.stock;
 
 import org.json.*;
+import android.util.Log;
 
 /*
  * SELECT * FROM yahoo.finance.quotes WHERE symbol="GOOG"
@@ -133,24 +134,45 @@ import org.json.*;
 });
  */
 public class FinantialDataUtil {
-	public static StockQuote getStockQuoteFromJson(String json) {
-		StockQuote quote = new StockQuote();
+	static private final String TAG = "FinantialDataUtil";
 
-		int count = 0;
-
+	public static int setupStockQuoteFromJson(StockQuote quote, String json) {
+		int result = 0;
+		double val = 0.0;
 		try {
 			JSONObject rootObject = new JSONObject(json);
 			JSONObject queryObject = rootObject.getJSONObject("query");
-			count = queryObject.getInt("count");
+			int count = queryObject.getInt("count");
 			JSONObject resultsObject = queryObject.getJSONObject("results");
 			JSONObject quoteObject = resultsObject.getJSONObject("quote");
 			quote.setSymbol(quoteObject.getString("symbol"));
 			quote.setLastTradePrice(quoteObject.getDouble("LastTradePriceOnly"));
-			quote.setAsk(quoteObject.getDouble("Ask"));
-			quote.setBid(quoteObject.getDouble("Bid"));
-		} catch (JSONException e) {
 
+			//Ask
+			val = 0.0;
+			if (!quoteObject.getString("Ask").equals("null")) { //null if the market is off
+				Log.i(TAG, "getting Ask val for " + quote.getSymbol());
+				val = quoteObject.getDouble("Ask");
+			}
+			quote.setAsk(val);
+
+			//Bid
+			val = 0.0;
+			if (!quoteObject.getString("Bid").equals("null")) { //null if the market is off
+				Log.i(TAG, "getting Bid val for " + quote.getSymbol());
+				val = quoteObject.getDouble("Bid");
+			}
+			quote.setBid(val);
+		} catch (JSONException e) {
+			Log.e(TAG, "exception!!");
+			result = -1;
 		}
-		return quote;
+		return result;
+	}
+
+	public static StockQuote getStockQuoteFromJson(String json) {
+		StockQuote quote = new StockQuote();
+		int result = setupStockQuoteFromJson(quote, json);
+		return (result == 0) ? quote : null;
 	}
 }
