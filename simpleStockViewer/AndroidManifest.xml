@@ -19,6 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+        <activity
+            android:name=".EditTargetQuoteActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".AddTargetQuoteActivity"
+            android:label="@string/app_name">
+        </activity>
+        </application>
 
 </manifest>

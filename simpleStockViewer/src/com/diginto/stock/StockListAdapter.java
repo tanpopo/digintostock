@@ -1,5 +1,8 @@
 package com.diginto.stock;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,15 @@ public class StockListAdapter extends ArrayAdapter<StockQuote> {
 	public StockListAdapter(Context context, int resourceId) {
 		super(context, resourceId);
 		this.resourceId = resourceId;
+	}
+	public void init() {
+		this.clear();
+
+        Set<String> symbols = TargetQuoteList.getInstance().getAllItems();
+		for (Iterator<String> i = symbols.iterator(); i.hasNext(); ) {
+			String symbol = (String)i.next();
+			this.add(new StockQuote(symbol));
+		}
 	}
 
 	@Override

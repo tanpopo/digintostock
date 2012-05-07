@@ -3,5 +3,8 @@
 
     <string name="hello">Hello World, SimpleStockViewerActivity!</string>
     <string name="app_name">SimpleStockViewer</string>
+    <string name="target_quote_edit">edit item</string>
+    <string name="update_all">update all</string>
+    <string name="target_quote_add">add item</string>
 
 </resources>

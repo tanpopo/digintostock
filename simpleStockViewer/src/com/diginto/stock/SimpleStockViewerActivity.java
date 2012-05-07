@@ -1,11 +1,19 @@
 package com.diginto.stock;
 
+import java.util.Set;
+import java.util.Iterator;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.Button;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.content.Intent;
+
 
 //Yahoo! Financeから株価を取得する方法
 //コンソール(http://developer.yahoo.com/yql/console/)から
@@ -17,18 +25,24 @@ import android.view.View;
 //diagnostics=true&q=SELECT%20*%20FROM%20yahoo.finance.quotes%20WHERE%20symbol%3D%22RBS.L%22%0A%09%09&format=json&env=http%3A%2F%2Fdatatables.org%2Falltables.env&crumb=xxTFTblU5fy&_rand=125&_p=h
 
 public class SimpleStockViewerActivity extends Activity {
+	private final String TAG = "SimpleStockViewerActivity";
 
 	static final int QUOTES_NUM = 3;
-	private static final String targetQuotes[] = {"GOOG", "YHOO", "SNE"};
 
-	private StockQuote[] getDummyQuoteList() {
-		StockQuote quotes[] = new StockQuote[QUOTES_NUM];
-		for (int i = 0; i < quotes.length; i++) {
-			quotes[i] = new StockQuote(targetQuotes[i]);
-		}
+	static final int MENU_ID_TARGET_QUOTE_EDIT = 0;
+	static final int MENU_ID_UPDATE_ALL = 1;
 
-			return quotes;
-	}
+//	private static final String targetQuotes[] = {"GOOG", "YHOO", "SNE"};
+
+//	private Set<StockQuote> getQuoteList(Set<String> symbols) {
+//		StockQuote quotes[] = new StockQuote[symbols.size()];
+//
+//		for (Iterator i = symbols.iterator(); i.hasNext(); ) {
+//			String symbol = (String)i.next();
+//			quotes[j] = new StockQuote(symbol);
+//		}
+//		return quotes;
+//	}
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,12 +52,8 @@ public class SimpleStockViewerActivity extends Activity {
         ListView stockListView = new ListView(this);
         stockListView = (ListView)this.findViewById(R.id.stockListView);
 
-        StockListAdapter adapter = new StockListAdapter(this, R.layout.row_stock);
-        StockQuote quotes[] = getDummyQuoteList();
-
-        for (int i = 0; i < quotes.length; i++) {
-	        adapter.add(quotes[i]);
-        }
+        StockListAdapter adapter = new StockListAdapter(this, R.layout.quote_list_row);
+        adapter.init();
         stockListView.setAdapter(adapter);
 
         //setup button
@@ -58,7 +68,45 @@ public class SimpleStockViewerActivity extends Activity {
             }
         });
     }
-    private int updateAllItem() {
+
+
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.onCreateOptionsMenu(menu);
+		menu.add(0, MENU_ID_TARGET_QUOTE_EDIT, 0, getString(R.string.target_quote_edit)).setIcon(android.R.drawable.ic_menu_edit); //Menu.add(int groupId, int itemId, int order, CharSequence title)
+        menu.add(0, MENU_ID_UPDATE_ALL, 0, getString(R.string.update_all)).setIcon(android.R.drawable.ic_menu_set_as);
+        return true;
+	}
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// TODO 自動生成されたメソッド・スタブ
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+	    case MENU_ID_TARGET_QUOTE_EDIT:
+	        Intent intent = new Intent();
+	        intent.setClassName(
+	                "com.diginto.stock",
+	                "com.diginto.stock.EditTargetQuoteActivity");
+//	        startActivity(intent);
+	        startActivityForResult(intent, 0);
+	        return true;
+	    case MENU_ID_UPDATE_ALL:
+	        return true;
+	    default:
+	        break;
+	    }
+	    return super.onOptionsItemSelected(item);
+	}
+
+	////////////////////////////////////////
+	// private functions
+
+	private int updateAllItem() {
 //		ListView lv = (ListView)findViewById(R.id.stockListView);
 //		for (int i = 0; i < lv.getCount(); i++) {
 //			View view = (View)lv.getItemAtPosition(i);//[todo] ここで返るのはおそらくStockQuote
@@ -68,4 +116,36 @@ public class SimpleStockViewerActivity extends Activity {
 //		}
 		return 0;
     }
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i(TAG, "onActivityResult() resultCode=..." + Integer.toString(resultCode));
+//		int updated = resultCode;
+//		if (updated == 1) {
+//			TargetQuoteList list = TargetQuoteList.getInstance();
+//			Log.i(TAG, "onActivityResult() size=" + list.size());
+//
+//			ListView listView = (ListView)this.findViewById(R.id.stockListView);
+//			StockListAdapter adapter = (StockListAdapter)listView.getAdapter();
+//			adapter.init();
+//			adapter.notifyDataSetChanged();
+//		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+
+	@Override
+	protected void onResume() {
+		int updated = 1;
+		if (updated == 1) {
+			TargetQuoteList list = TargetQuoteList.getInstance();
+			Log.i(TAG, "onActivityResult() size=" + list.size());
+
+			ListView listView = (ListView)this.findViewById(R.id.stockListView);
+			StockListAdapter adapter = (StockListAdapter)listView.getAdapter();
+			adapter.init();
+			adapter.notifyDataSetChanged();
+		}
+
+		super.onResume();
+	}
+
 }
